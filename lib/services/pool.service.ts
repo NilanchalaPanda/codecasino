@@ -7,6 +7,7 @@ import {
   PoolStatus,
   LeetCodeProblem,
   TransactionType,
+  PoolBetTypes,
 } from "../types";
 import {
   GAME_TIME_LIMITS,
@@ -15,6 +16,7 @@ import {
   DEFAULT_PRIZE_DISTRIBUTION,
   ERROR_MESSAGES,
 } from "../utils/constants";
+import { errorResponse, successResponse } from "../utils/response";
 import { leetCodeService } from "./leetcode.service";
 import { userService } from "./user.service";
 import { nanoid } from "nanoid";
@@ -30,6 +32,7 @@ class PoolService {
     entryFee: number,
     maxPlayers: number = POOL_CONFIG.DEFAULT_MAX_PLAYERS,
     isPrivate: boolean = false,
+    betType: PoolBetTypes,
     scheduledStart?: Date
   ): Promise<{ success: boolean; poolId?: string; error?: string }> {
     // Validation
@@ -73,6 +76,7 @@ class PoolService {
         scheduled_start: scheduledStart?.toISOString() || null,
         created_by: creatorId,
         status: PoolStatus.WAITING,
+        bet_type: betType,
       })
       .select()
       .single();
@@ -88,140 +92,137 @@ class PoolService {
   /**
    * Join a pool
    */
-  async joinPool(
-    userId: string,
-    poolId: string,
-    inviteCode?: string
-  ): Promise<{ success: boolean; error?: string }> {
-    // Check if user is banned
-    const isBanned = await userService.isBanned(userId);
-    if (isBanned) {
-      return { success: false, error: ERROR_MESSAGES.ACCOUNT_BANNED };
-    }
+  async joinPool(userId: string, poolId: string, inviteCode?: string) {
+    try {
+      // 1️⃣ Check if user is banned
+      const isBanned = await userService.isBanned(userId);
+      if (isBanned) {
+        return errorResponse(ERROR_MESSAGES.ACCOUNT_BANNED, 403);
+      }
 
-    // Get pool
-    const pool = await this.getPool(poolId);
-    if (!pool) {
-      return { success: false, error: ERROR_MESSAGES.POOL_NOT_FOUND };
-    }
+      // 2️⃣ Get pool
+      const pool = await this.getPool(poolId);
+      if (!pool) {
+        return errorResponse(ERROR_MESSAGES.POOL_NOT_FOUND, 404);
+      }
 
-    // Validate pool status
-    if (pool.status !== PoolStatus.WAITING) {
-      return { success: false, error: ERROR_MESSAGES.POOL_STARTED };
-    }
+      // 3️⃣ Validate pool status
+      if (pool.status !== PoolStatus.WAITING) {
+        return errorResponse(ERROR_MESSAGES.POOL_STARTED, 400);
+      }
 
-    // Check if pool is full
-    if (pool.current_players >= pool.max_players) {
-      return { success: false, error: ERROR_MESSAGES.POOL_FULL };
-    }
+      // 4️⃣ Check if pool is full
+      if (pool.current_players >= pool.max_players) {
+        return errorResponse(ERROR_MESSAGES.POOL_FULL, 400);
+      }
 
-    // Check private pool invite code
-    if (pool.is_private && pool.invite_code !== inviteCode) {
-      return { success: false, error: ERROR_MESSAGES.INVALID_INVITE_CODE };
-    }
+      // 5️⃣ Validate invite code for private pool
+      if (pool.is_private && pool.invite_code !== inviteCode) {
+        return errorResponse(ERROR_MESSAGES.INVALID_INVITE_CODE, 403);
+      }
 
-    // Check if already in pool
-    const existingParticipant = await this.getParticipant(poolId, userId);
-    if (existingParticipant) {
-      return { success: false, error: ERROR_MESSAGES.ALREADY_IN_POOL };
-    }
+      // 6️⃣ Check if user already in pool
+      const existingParticipant = await this.getParticipant(poolId, userId);
+      if (existingParticipant) {
+        return errorResponse(ERROR_MESSAGES.ALREADY_IN_POOL, 400);
+      }
 
-    // Check VP balance
-    const vpBalance = await userService.getVPBalance(userId);
-    if (vpBalance < pool.entry_fee) {
-      return { success: false, error: ERROR_MESSAGES.INSUFFICIENT_VP };
-    }
+      // 7️⃣ Validate VP balance
+      const vpBalance = await userService.getVPBalance(userId);
+      if (vpBalance < pool.entry_fee) {
+        return errorResponse(ERROR_MESSAGES.INSUFFICIENT_VP, 400);
+      }
 
-    // Deduct entry fee
-    const deducted = await userService.deductVP(
-      userId,
-      pool.entry_fee,
-      TransactionType.GAME_ENTRY,
-      poolId,
-      `Entry fee for pool ${poolId}`
-    );
-
-    if (!deducted) {
-      return { success: false, error: ERROR_MESSAGES.INSUFFICIENT_VP };
-    }
-
-    // Assign problems
-    const problems = await leetCodeService.getRandomProblems(
-      pool.difficulty,
-      pool.question_count
-    );
-
-    if (problems.length < pool.question_count) {
-      // Refund if we can't assign problems
-      await userService.addVP(
+      // 8️⃣ Deduct entry fee
+      const deducted = await userService.deductVP(
         userId,
         pool.entry_fee,
         TransactionType.GAME_ENTRY,
-        poolId
+        poolId,
+        `Entry fee for pool ${poolId}`
       );
-      return { success: false, error: "Failed to assign problems" };
-    }
+      if (!deducted) {
+        return errorResponse(ERROR_MESSAGES.INSUFFICIENT_VP, 400);
+      }
 
-    // Add time limits to problems
-    const problemsWithTime: LeetCodeProblem[] = problems.map((p) => ({
-      ...p,
-      timeLimit: pool.time_limit_minutes * 60, // Convert to seconds
-    }));
-
-    // Create participant
-    const { error } = await supabaseAdmin.from("game_participants").insert({
-      pool_id: poolId,
-      user_id: userId,
-      problems_assigned: problemsWithTime,
-    });
-
-    if (error) {
-      console.error("Error joining pool:", error);
-      // Refund
-      await userService.addVP(
-        userId,
-        pool.entry_fee,
-        TransactionType.GAME_ENTRY,
-        poolId
+      // 9️⃣ Assign problems
+      const problems = await leetCodeService.getRandomProblems(
+        pool.difficulty,
+        pool.question_count
       );
-      return { success: false, error: "Failed to join pool" };
-    }
 
-    // Check if pool is now full and should auto-start
-    const updatedPool = await this.getPool(poolId);
-    if (updatedPool && updatedPool.current_players >= updatedPool.max_players) {
-      // Schedule auto-start after delay
-      setTimeout(async () => {
-        await this.startPool(poolId);
-      }, POOL_CONFIG.AUTO_START_DELAY * 1000);
-    }
+      if (problems.length < pool.question_count) {
+        // Refund if assignment failed
+        await userService.addVP(
+          userId,
+          pool.entry_fee,
+          TransactionType.GAME_ENTRY,
+          poolId
+        );
+        return errorResponse("Failed to assign problems", 500);
+      }
 
-    return { success: true };
+      // 🔟 Add time limits to problems
+      const problemsWithTime: LeetCodeProblem[] = problems.map((p) => ({
+        ...p,
+        timeLimit: pool.time_limit_minutes * 60, // seconds
+      }));
+
+      // 1️⃣1️⃣ Create participant record
+      const { error } = await supabaseAdmin.from("game_participants").insert({
+        pool_id: poolId,
+        user_id: userId,
+        problems_assigned: problemsWithTime,
+      });
+
+      if (error) {
+        await userService.addVP(
+          userId,
+          pool.entry_fee,
+          TransactionType.GAME_ENTRY,
+          poolId
+        );
+        return errorResponse("Failed to join pool", 500);
+      }
+
+      // 1️⃣2️⃣ Auto-start pool if full
+      const updatedPool = await this.getPool(poolId);
+      if (
+        updatedPool &&
+        updatedPool.current_players >= updatedPool.max_players
+      ) {
+        setTimeout(async () => {
+          await this.startPool(poolId);
+        }, POOL_CONFIG.AUTO_START_DELAY * 1000);
+      }
+
+      return successResponse(
+        { poolId, joined: true },
+        "Joined pool successfully"
+      );
+    } catch (err: any) {
+      console.error("joinPool() error:", err);
+      return errorResponse("An unexpected error occurred", 500);
+    }
   }
 
   /**
    * Leave a pool (before it starts)
    */
-  async leavePool(
-    userId: string,
-    poolId: string
-  ): Promise<{ success: boolean; error?: string }> {
+  async leavePool(userId: string, poolId: string) {
     const pool = await this.getPool(poolId);
 
     if (!pool) {
-      return { success: false, error: ERROR_MESSAGES.POOL_NOT_FOUND };
+      return errorResponse(ERROR_MESSAGES.POOL_NOT_FOUND, 404);
     }
 
     if (pool.status !== PoolStatus.WAITING) {
-      return {
-        success: false,
-        error: "Cannot leave pool after it has started",
-      };
+      return errorResponse("Cannot leave pool after it has started", 400);
     }
 
     const participant = await this.getParticipant(poolId, userId);
     if (!participant) {
-      return { success: false, error: "Not in this pool" };
+      return errorResponse("Not in this pool", 404);
     }
 
     // Delete participant
@@ -232,7 +233,7 @@ class PoolService {
       .eq("user_id", userId);
 
     if (error) {
-      return { success: false, error: "Failed to leave pool" };
+      return errorResponse("Failed to leave pool", 500);
     }
 
     // Refund entry fee
@@ -253,27 +254,25 @@ class PoolService {
       })
       .eq("id", poolId);
 
-    return { success: true };
+    return successResponse({ success: true }, "Left pool successfully");
   }
 
   /**
    * Start a pool (begin the game)
    */
-  async startPool(
-    poolId: string
-  ): Promise<{ success: boolean; error?: string }> {
+  async startPool(poolId: string) {
     const pool = await this.getPool(poolId);
 
     if (!pool) {
-      return { success: false, error: ERROR_MESSAGES.POOL_NOT_FOUND };
+      return errorResponse(ERROR_MESSAGES.POOL_NOT_FOUND, 404);
     }
 
     if (pool.status !== PoolStatus.WAITING) {
-      return { success: false, error: ERROR_MESSAGES.GAME_ALREADY_STARTED };
+      return errorResponse(ERROR_MESSAGES.GAME_ALREADY_STARTED, 400);
     }
 
     if (pool.current_players < pool.min_players) {
-      return { success: false, error: ERROR_MESSAGES.MIN_PLAYERS_NOT_MET };
+      return errorResponse(ERROR_MESSAGES.MIN_PLAYERS_NOT_MET, 400);
     }
 
     const now = new Date();
@@ -292,7 +291,7 @@ class PoolService {
       .eq("id", poolId);
 
     if (error) {
-      return { success: false, error: "Failed to start pool" };
+      return errorResponse("Failed to start pool", 500);
     }
 
     // Update all participants to active
@@ -309,7 +308,7 @@ class PoolService {
       await this.completePool(poolId);
     }, pool.time_limit_minutes * 60 * 1000);
 
-    return { success: true };
+    return successResponse({ success: true }, "Pool started successfully");
   }
 
   /**
@@ -317,15 +316,15 @@ class PoolService {
    */
   async completePool(
     poolId: string
-  ): Promise<{ success: boolean; error?: string }> {
+  ) {
     const pool = await this.getPool(poolId);
 
     if (!pool) {
-      return { success: false, error: ERROR_MESSAGES.POOL_NOT_FOUND };
+      return errorResponse(ERROR_MESSAGES.POOL_NOT_FOUND, 404);
     }
 
     if (pool.status !== PoolStatus.ACTIVE) {
-      return { success: false, error: "Pool is not active" };
+      return errorResponse("Pool is not active", 400);
     }
 
     // Get all participants and rank them
@@ -411,7 +410,7 @@ class PoolService {
       .update({ status: PoolStatus.COMPLETED })
       .eq("id", poolId);
 
-    return { success: true };
+    return successResponse({ success: true }, "Pool completed successfully");
   }
 
   /**

@@ -15,6 +15,11 @@ export enum GameType {
   MARATHON = 'marathon'   // 5 problems
 }
 
+export enum PoolBetTypes {
+  VIRTUAL_POINTS = 'vp',
+  REAL_MONEY = 'real_money'
+}
+
 export enum PoolStatus {
   WAITING = 'waiting',
   ACTIVE = 'active',
