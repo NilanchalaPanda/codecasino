@@ -1,6 +1,7 @@
 import { supabaseAdmin } from "../supabase/server";
 import { Profile, VPTransaction, TransactionType } from "../types";
 import { VP_CONFIG, TIER_POINTS_PER_WIN } from "../utils/constants";
+import { log, LogLevel } from "../utils/logger";
 import { leetCodeService } from "./leetcode.service";
 
 class UserService {
@@ -219,6 +220,7 @@ class UserService {
     }
 
     if (profile.vp_balance < amount) {
+      log(LogLevel.WARN, "Insufficient VP balance", { userId, amount });
       return false; // Insufficient balance
     }
 
@@ -233,7 +235,7 @@ class UserService {
       .eq("id", userId);
 
     if (error) {
-      console.error("Error deducting VP:", error);
+      log(LogLevel.ERROR, "Error deducting VP", error);
       return false;
     }
 
@@ -289,7 +291,8 @@ class UserService {
       .range(offset, offset + limit - 1);
 
     if (error) {
-      console.error("Error fetching transactions:", error);
+      log(LogLevel.ERROR, "Error fetching transactions", error);
+      console.log("Error fetching txns - ", error)
       return [];
     }
 
@@ -501,20 +504,20 @@ class UserService {
   async updateProfile(
     userId: string,
     updates: {
-      displayName?: string;
+      display_name?: string;
       bio?: string;
       country?: string;
-      avatarUrl?: string;
+      avatar_url?: string;
     }
   ): Promise<boolean> {
     const dbUpdates: any = {};
 
-    if (updates.displayName !== undefined)
-      dbUpdates.display_name = updates.displayName;
+    if (updates.display_name !== undefined)
+      dbUpdates.display_name = updates.display_name;
     if (updates.bio !== undefined) dbUpdates.bio = updates.bio;
     if (updates.country !== undefined) dbUpdates.country = updates.country;
-    if (updates.avatarUrl !== undefined)
-      dbUpdates.avatar_url = updates.avatarUrl;
+    if (updates.avatar_url !== undefined)
+      dbUpdates.avatar_url = updates.avatar_url;
 
     const { error } = await supabaseAdmin
       .from("profiles")
@@ -522,6 +525,102 @@ class UserService {
       .eq("id", userId);
 
     return !error;
+  }
+
+  /**
+   * Fetch user profile + computed stats for dashboard.
+   * Uses v_user_stats view (from schema) for summarized stats.
+   */
+  async getStats(userId: string) {
+    try {
+      // 1️⃣ Get user's main profile
+      const { data: profile, error: profileError } = await supabaseAdmin
+        .from("profiles")
+        .select("*")
+        .eq("id", userId)
+        .single();
+
+      if (profileError || !profile) {
+        throw new Error("User profile not found");
+      }
+
+      // 2️⃣ Fetch extended stats from view `v_user_stats`
+      const { data: statsView, error: statsError } = await supabaseAdmin
+        .from("v_user_stats")
+        .select("*")
+        .eq("id", userId)
+        .single();
+
+      if (statsError) {
+        log(
+          LogLevel.WARN,
+          "v_user_stats fetch failed, falling back to profile",
+          statsError.message
+        );
+      }
+
+      // 3️⃣ Get recent VP transactions (last 5)
+      const { data: transactions, error: txError } = await supabaseAdmin
+        .from("vp_transactions")
+        .select("id, amount, transaction_type, description, created_at")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
+        .limit(5);
+
+      if (txError) {
+        log(LogLevel.WARN, "Failed to fetch transactions", txError.message);
+      }
+
+      // 4️⃣ Get daily streak info (from daily_rewards)
+      const { data: lastReward, error: rewardError } = await supabaseAdmin
+        .from("daily_rewards")
+        .select("reward_date, streak_day, vp_awarded")
+        .eq("user_id", userId)
+        .order("reward_date", { ascending: false })
+        .limit(1)
+        .single();
+
+      if (rewardError) {
+        log(
+          LogLevel.WARN,
+          "No recent daily reward record",
+          rewardError.message
+        );
+      }
+
+      // 5️⃣ Construct response object (merge everything)
+      const response = {
+        id: profile.id,
+        display_name: profile.display_name,
+        email: profile.email,
+        tier: profile.tier,
+        tier_points: profile.tier_points,
+        vp_balance: profile.vp_balance,
+        vp_lifetime_earned: profile.vp_lifetime_earned,
+        vp_lifetime_spent: profile.vp_lifetime_spent,
+        total_games: profile.total_games,
+        games_won: profile.games_won,
+        games_lost: profile.games_lost,
+        total_problems_solved: profile.total_problems_solved,
+        current_streak: profile.current_streak,
+        longest_streak: profile.longest_streak,
+        last_played_at: profile.last_played_at,
+        global_rank: profile.global_rank,
+        leetcode_username: profile.leetcode_username,
+        leetcode_rating: profile.leetcode_rating,
+        is_premium: profile.is_premium,
+        premium_until: profile.premium_until,
+        avatar_url: profile.avatar_url,
+        stats: statsView || null,
+        recent_transactions: transactions || [],
+        last_reward: lastReward || null,
+      };
+
+      return response;
+    } catch (error: any) {
+      log(LogLevel.ERROR, "Error fetching user stats", error.message);
+      throw error;
+    }
   }
 }
 
