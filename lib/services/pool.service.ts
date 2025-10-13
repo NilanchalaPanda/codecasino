@@ -108,7 +108,7 @@ class PoolService {
       }
 
       // 2️⃣ Get pool
-      const pool = await this.getPool(poolId);
+      const pool = await this.getPoolDetailsById(poolId);
       if (!pool) {
         return errorResponse(ERROR_MESSAGES.POOL_NOT_FOUND, 404);
       }
@@ -194,7 +194,7 @@ class PoolService {
 
       // ! I WANT TO START THE GAMES AT DESIGNATED TIMES ONLY WHAT EVER OPTION WE ARE PROVIDING THE CREATOR OF THE POOL. AND WHEN FILLED THEN TOO THE GAME WILL TAKE PLACE AT THE DESIGNATED TIME ONLY. SO WE HAVE TO UPDATE THE POOL STATUS TO SCHEDULED.
       // 1️⃣2️⃣ Auto-start pool if full
-      const updatedPool = await this.getPool(poolId);
+      const updatedPool = await this.getPoolDetailsById(poolId);
       if (
         updatedPool &&
         updatedPool.current_players >= updatedPool.max_players
@@ -218,7 +218,7 @@ class PoolService {
    * Leave a pool (before it starts)
    */
   async leavePool(userId: string, poolId: string) {
-    const pool = await this.getPool(poolId);
+    const pool = await this.getPoolDetailsById(poolId);
 
     if (!pool) {
       return errorResponse(ERROR_MESSAGES.POOL_NOT_FOUND, 404);
@@ -269,7 +269,7 @@ class PoolService {
    * Start a pool (begin the game)
    */
   async startPool(poolId: string) {
-    const pool = await this.getPool(poolId);
+    const pool = await this.getPoolDetailsById(poolId);
 
     if (!pool) {
       return errorResponse(ERROR_MESSAGES.POOL_NOT_FOUND, 404);
@@ -323,7 +323,7 @@ class PoolService {
    * Complete a pool and distribute prizes
    */
   async completePool(poolId: string) {
-    const pool = await this.getPool(poolId);
+    const pool = await this.getPoolDetailsById(poolId);
 
     if (!pool) {
       return errorResponse(ERROR_MESSAGES.POOL_NOT_FOUND, 404);
@@ -422,7 +422,7 @@ class PoolService {
   /**
    * Get pool by ID
    */
-  async getPool(poolId: string): Promise<GamePool | null> {
+  async getPoolDetailsById(poolId: string): Promise<GamePool | null> {
     const { data, error } = await supabaseAdmin
       .from("game_pools")
       .select("*")
@@ -588,7 +588,7 @@ class PoolService {
   async cancelPool(
     poolId: string
   ): Promise<{ success: boolean; error?: string }> {
-    const pool = await this.getPool(poolId);
+    const pool = await this.getPoolDetailsById(poolId);
 
     if (!pool) {
       return { success: false, error: ERROR_MESSAGES.POOL_NOT_FOUND };

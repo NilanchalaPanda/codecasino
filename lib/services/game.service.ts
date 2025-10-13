@@ -20,9 +20,9 @@ class GameService {
     problemId: string,
     timeTaken: number,
     leetcodeSubmissionId?: string
-  ): Promise<{ success: boolean; error?: string }> {
+  ): Promise<{ success: boolean; error?: string; data?: any }> {
     // Get pool and participant
-    const pool = await poolService.getPool(poolId);
+    const pool = await poolService.getPoolDetailsById(poolId);
     const participant = await poolService.getParticipant(poolId, userId);
 
     if (!pool) {
@@ -156,7 +156,7 @@ class GameService {
    * Get game state for real-time updates
    */
   async getGameState(poolId: string): Promise<GameState | null> {
-    const pool = await poolService.getPool(poolId);
+    const pool = await poolService.getPoolDetailsById(poolId);
 
     if (!pool) {
       return null;
@@ -290,7 +290,7 @@ class GameService {
         difficulty: p.difficulty,
         slug: p.slug,
         solved: !!submission?.is_accepted,
-        timeTaken: submission?.time_taken,
+        timeTaken: submission?.time_taken ?? undefined,
       };
     });
 
@@ -341,7 +341,7 @@ class GameService {
     totalParticipants: number;
     totalPrize: number;
   } | null> {
-    const pool = await poolService.getPool(poolId);
+    const pool = await poolService.getPoolDetailsById(poolId);
 
     if (!pool || pool.status !== "completed") {
       return null;
@@ -381,7 +381,7 @@ class GameService {
    * Check if user can still submit (time not expired)
    */
   async canSubmit(poolId: string, userId: string): Promise<boolean> {
-    const pool = await poolService.getPool(poolId);
+    const pool = await poolService.getPoolDetailsById(poolId);
     const participant = await poolService.getParticipant(poolId, userId);
 
     if (!pool || !participant) {
