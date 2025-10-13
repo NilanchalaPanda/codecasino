@@ -1,7 +1,7 @@
 import { gameService } from "@/lib/services/game.service";
 import { userService } from "@/lib/services/user.service";
 import { requireAuth } from "@/lib/supabase/server";
-import { ERROR_MESSAGES, RATE_LIMITS } from "@/lib/utils/constants";
+import { ERROR_MESSAGES } from "@/lib/utils/constants";
 import { log, LogLevel } from "@/lib/utils/logger";
 import { checkRateLimit, getSubmitRateLimit } from "@/lib/utils/rate-limiter";
 import { errorResponse, successResponse } from "@/lib/utils/response";
