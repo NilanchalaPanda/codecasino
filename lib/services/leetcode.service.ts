@@ -111,6 +111,7 @@ class LeetCodeService {
     rating: number;
     totalSolved: number;
     avatar?: string;
+    error?: string; // Added error handling
   }> {
     try {
       const data = await this.graphqlRequest<any>(USER_PROFILE_QUERY, {
@@ -118,7 +119,12 @@ class LeetCodeService {
       });
 
       if (!data.matchedUser) {
-        return { isValid: false, rating: 0, totalSolved: 0 };
+        return {
+          isValid: false,
+          rating: 0,
+          totalSolved: 0,
+          error: "User not found on LeetCode",
+        };
       }
 
       const user = data.matchedUser;
@@ -135,7 +141,13 @@ class LeetCodeService {
       };
     } catch (error) {
       console.error("LeetCode verification failed:", error);
-      return { isValid: false, rating: 0, totalSolved: 0 };
+
+      let message = "Unknown error during verification";
+      if (error instanceof Error) {
+        message = error.message;
+      }
+
+      return { isValid: false, rating: 0, totalSolved: 0, error: message };
     }
   }
 
