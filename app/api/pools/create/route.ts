@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
       maxPlayers || 10,
       isPrivate || false,
       betType,
-      scheduledStart ? new Date(scheduledStart) : undefined,
+      scheduledStart ? new Date(scheduledStart) : undefined
     );
 
     if (!result.success) {
@@ -86,6 +86,7 @@ export async function POST(request: NextRequest) {
         userId: user.id,
         error: result.error,
       });
+      return errorResponse(result.error!, 400);
     }
 
     // ! THINK ABOUT IT > Auto-join the creator.

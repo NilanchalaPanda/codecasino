@@ -21,6 +21,13 @@ import { leetCodeService } from "./leetcode.service";
 import { userService } from "./user.service";
 import { nanoid } from "nanoid";
 
+interface PoolQueryParams {
+  difficulty?: GameDifficulty;
+  game_type?: string;
+  page: number;
+  limit: number;
+}
+
 class PoolService {
   /**
    * Create a new game pool
@@ -185,6 +192,7 @@ class PoolService {
         return errorResponse("Failed to join pool", 500);
       }
 
+      // ! I WANT TO START THE GAMES AT DESIGNATED TIMES ONLY WHAT EVER OPTION WE ARE PROVIDING THE CREATOR OF THE POOL. AND WHEN FILLED THEN TOO THE GAME WILL TAKE PLACE AT THE DESIGNATED TIME ONLY. SO WE HAVE TO UPDATE THE POOL STATUS TO SCHEDULED.
       // 1️⃣2️⃣ Auto-start pool if full
       const updatedPool = await this.getPool(poolId);
       if (
@@ -314,9 +322,7 @@ class PoolService {
   /**
    * Complete a pool and distribute prizes
    */
-  async completePool(
-    poolId: string
-  ) {
+  async completePool(poolId: string) {
     const pool = await this.getPool(poolId);
 
     if (!pool) {
@@ -471,26 +477,37 @@ class PoolService {
   /**
    * Get available pools
    */
-  async getAvailablePools(difficulty?: GameDifficulty): Promise<GamePool[]> {
+  async getAvailablePools(params: PoolQueryParams): Promise<GamePool[]> {
+    const { difficulty, game_type, page, limit } = params;
+
     let query = supabaseAdmin
       .from("game_pools")
       .select("*")
       .eq("status", PoolStatus.WAITING)
-      .eq("is_private", false)
-      .lt("current_players", supabaseAdmin.rpc("max_players"));
+      .eq("is_private", false);
 
     if (difficulty) {
       query = query.eq("difficulty", difficulty);
     }
+
+    if (game_type) {
+      query = query.eq("game_type", game_type);
+    }
+
+    // Pagination (offset & limit)
+    const offset = (page - 1) * limit;
+    query = query.range(offset, offset + limit - 1);
 
     const { data, error } = await query.order("created_at", {
       ascending: false,
     });
 
     if (error) {
+      console.error("Error fetching pools:", error);
       return [];
     }
 
+    // ! MAYBE WE CAN RETURN THE POOL IS FILLED OR NOT AND HANDLE THE VIEW IN THE FRONTEND FOR BETTER UX.
     return data || [];
   }
 
