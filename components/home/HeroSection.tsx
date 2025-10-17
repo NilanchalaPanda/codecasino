@@ -24,9 +24,9 @@ const HeroSection = () => {
   return (
     <section className="flex flex-col items-center justify-center min-h-screen text-center bg-background px-4 py-12">
       <h1 className="font-display font-semibold text-5xl sm:text-6xl mb-4 text-cyan">
-        Code<span className="text-foreground">Casino</span>
+        Where Code Meets Competition
       </h1>
-      <p className="text-secondary text-lg max-w-2xl mb-8">
+      <p className="text-secondary text-sm sm:text-lg max-w-2xl mb-8">
         Enter the ultimate coding arena where algorithms meet adrenaline. Battle
         fellow developers, climb the leaderboard, and prove your programming
         prowess.
