@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import {
   Code2,
   Home,
-  Sword,
+  Swords,
   LayoutDashboard,
   ShoppingBag,
   Crown,
@@ -15,7 +15,7 @@ import clsx from "clsx";
 
 const navLinks = [
   { name: "Home", href: "/", icon: Home },
-  { name: "Battle", href: "/battle", icon: Sword },
+  { name: "Battle", href: "/battle", icon: Swords },
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Store", href: "/store", icon: ShoppingBag },
 ];
@@ -52,10 +52,10 @@ export default function Navbar() {
               href="#00d9ff"
               onClick={() => navigate(href)}
               className={clsx(
-                "flex items-center gap-1 sm:gap-2 text-xs sm:text-sm font-mono px-3 py-2 rounded-lg transition-all duration-300",
+                "flex items-center gap-1 sm:gap-2 text-sm sm:text-sm font-mono px-3 py-2 rounded-lg transition-all duration-300",
                 isActive
-                  ? "bg-cyan/10 border border-[#00d9ff]/20"
-                  : "text-gray-400 hover:text-[#00d9ff]"
+                  ? "bg-cyan/10 border text-cyan border-[#00d9ff]/20"
+                  : "text-gray-400 hover:text-[#00d9ff] hover:bg-cyan/8"
               )}
             >
               <Icon size={18} />

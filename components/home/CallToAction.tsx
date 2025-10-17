@@ -4,7 +4,7 @@ import { ArrowRight } from "lucide-react";
 
 export default function CallToAction() {
   return (
-    <footer className="bg-zinc-950 border border-foreground/15 py-24 mt-12 px-4 rounded-4xl max-w-7xl mx-auto">
+    <footer className="bg-gray-800/50 border border-gray-700 py-24 mt-12 px-4 rounded-4xl max-w-7xl mx-auto">
       <div className="max-w-5xl mx-auto text-center text-white">
         <h2 className="text-4xl sm:text-5xl font-extrabold mb-4 text-[#00d9ff] font-display uppercase tracking-wider">
           Ready to Prove Your Skills?

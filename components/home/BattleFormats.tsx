@@ -1,7 +1,4 @@
 import {
-  Sword,
-  Trophy,
-  Crown,
   Code2,
   Timer,
   SkipForward,
@@ -69,7 +66,7 @@ export default function BattleFormats() {
             className="bg-gray-900 border border-gray-800 rounded-lg p-6 hover:border-cyan transition-all duration-300 flex flex-col items-center text-center"
           >
             <div className="bg-gray-800 rounded-md p-3 mb-1">{item.icon}</div>
-            <h3 className="font-sans text-3xl font-extrabold text-white">
+            <h3 className="font-display text-3xl font-extrabold text-white">
               {item.title}
             </h3>
 

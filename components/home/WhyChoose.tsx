@@ -1,9 +1,9 @@
-import { Sword, Trophy, Crown, Code2 } from "lucide-react";
+import { Swords, Trophy, Crown, Code2 } from "lucide-react";
 
 export default function WhyChoose() {
   const features = [
     {
-      icon: <Sword className="h-6 w-6 text-cyan" />,
+      icon: <Swords className="h-6 w-6 text-cyan" />,
       title: "Real-time Battles",
       desc: "Compete against developers worldwide in live coding challenges with instant feedback and rankings.",
     },
