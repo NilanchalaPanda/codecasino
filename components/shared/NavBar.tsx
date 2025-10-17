@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState } from "react";
 import {
   Code2,
@@ -14,6 +13,7 @@ import {
   X,
 } from "lucide-react";
 import clsx from "clsx";
+import { usePathname, useRouter } from "next/navigation";
 
 const navLinks = [
   { name: "Home", href: "/", icon: Home },
@@ -23,15 +23,9 @@ const navLinks = [
 ];
 
 export default function Navbar() {
-  const [activeRoute, setActiveRoute] = useState("/");
-  const [isMenuOpen, setIsMenuOpen] = useState(false); // State for mobile menu
-
-  const navigate = (href: React.SetStateAction<string>) => {
-    // In a production app, this would be a router call (e.g., router.push(href))
-    setActiveRoute(href);
-    setIsMenuOpen(false); // Close menu on navigation
-    console.log(`Navigating to: ${href}`);
-  };
+  const pathname = usePathname();
+  const router = useRouter();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
     <nav className="relative bg-[#0d0d0d] shadow-lg shadow-black/50">
@@ -39,7 +33,10 @@ export default function Navbar() {
         {/* Left Logo */}
         <a
           href="#"
-          onClick={() => navigate("/")}
+          onClick={(e) => {
+            e.preventDefault();
+            router.push("/");
+          }}
           className="flex items-center gap-2 text-[#00d9ff] text-xl sm:text-2xl font-display transition-all duration-300 hover:scale-[1.05]"
         >
           <Code2 className="h-7 w-7 text-[#00d9ff]" />
@@ -49,12 +46,15 @@ export default function Navbar() {
         {/* Middle Nav Links (Desktop Only) */}
         <div className="hidden sm:flex items-center gap-2">
           {navLinks.map(({ name, href, icon: Icon }) => {
-            const isActive = activeRoute === href;
+            const isActive = pathname === href;
             return (
               <a
                 key={name}
                 href="#"
-                onClick={() => navigate(href)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  router.push(href);
+                }}
                 className={clsx(
                   "flex items-center gap-2 text-sm font-mono px-3 py-2 rounded-lg transition-all duration-300",
                   isActive
@@ -113,12 +113,15 @@ export default function Navbar() {
       >
         <div className="flex flex-col px-4 space-y-2">
           {navLinks.map(({ name, href, icon: Icon }) => {
-            const isActive = activeRoute === href;
+            const isActive = pathname === href;
             return (
               <a
                 key={name}
                 href="#"
-                onClick={() => navigate(href)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  router.push(href);
+                }}
                 className={clsx(
                   "flex items-center gap-3 text-base font-mono px-3 py-3 rounded-lg transition-all duration-200",
                   isActive
@@ -134,7 +137,10 @@ export default function Navbar() {
           {/* Mobile User Profile Link */}
           <a
             href="#"
-            onClick={() => navigate("/profile")}
+            onClick={(e) => {
+              e.preventDefault();
+              router.push("/profile");
+            }}
             className="flex items-center gap-3 text-base font-mono px-3 py-3 rounded-lg text-gray-400 hover:text-[#00d9ff] hover:bg-gray-800 border-t border-gray-800 mt-2"
           >
             <User size={20} />
