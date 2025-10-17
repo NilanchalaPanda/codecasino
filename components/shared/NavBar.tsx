@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import clsx from "clsx";
 import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
 
 const navLinks = [
   { name: "Home", href: "/", icon: Home },
@@ -79,9 +80,13 @@ export default function Navbar() {
           </div>
 
           {/* Notification Icon */}
-          <button className="p-2 rounded-lg bg-gray-800 border border-gray-700 hover:border-[#00d9ff] transition duration-300 shadow-sm hover:shadow-cyan-900/50">
-            <Bell size={18} className="text-gray-400 hover:text-[#00d9ff]" />
-          </button>
+          <Link href="/notifications" className="hover:cursor-pointer">
+            <button
+              className={`p-2 rounded-lg bg-gray-800 border border-gray-700 hover:border-[#00d9ff] transition duration-300 shadow-sm hover:shadow-cyan-900/50`}
+            >
+              <Bell size={18} className="text-gray-400 hover:text-[#00d9ff]" />
+            </button>
+          </Link>
 
           {/* Mobile Menu Button (Mobile Only) */}
           <button
@@ -96,9 +101,11 @@ export default function Navbar() {
           </button>
 
           {/* User Icon (Desktop Only - Mobile User icon is in menu) */}
-          <button className="hidden sm:block p-2 rounded-lg bg-gray-800 border border-gray-700 hover:border-[#00d9ff] transition duration-300 shadow-sm hover:shadow-cyan-900/50">
-            <User size={18} className="text-gray-400 hover:text-[#00d9ff]" />
-          </button>
+          <Link href={"/profile"} className="hover:cursor-pointer">
+            <button className="hidden sm:block p-2 rounded-lg bg-gray-800 border border-gray-700 hover:border-[#00d9ff] transition duration-300 shadow-sm hover:shadow-cyan-900/50">
+              <User size={18} className="text-gray-400 hover:text-[#00d9ff]" />
+            </button>
+          </Link>
         </div>
       </div>
 
