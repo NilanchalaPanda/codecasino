@@ -4,11 +4,11 @@ import { errorResponse, successResponse } from "@/lib/utils/response";
 
 export async function GET(
   request: Request,
-  { params }: { params: { poolId: string } }
+  { params }: { params: Promise<{ poolId: string }> }
 ) {
   try {
     const user = await requireAuth();
-    const poolId = params.poolId;
+    const poolId = (await params).poolId;
 
     // Get overall game state (status, leaderboard, timer)
     const gameState = await gameService.getGameState(poolId);

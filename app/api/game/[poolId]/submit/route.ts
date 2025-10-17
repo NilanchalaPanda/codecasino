@@ -8,7 +8,7 @@ import { errorResponse, successResponse } from "@/lib/utils/response";
 
 export async function POST(
   request: Request,
-  { params }: { params: { poolId: string } }
+  { params }: { params: Promise<{ poolId: string }> }
 ) {
   try {
     const user = await requireAuth();
@@ -49,7 +49,9 @@ export async function POST(
 
     const result = await gameService.submitProblem(
       user.id,
-      params.poolId,
+      (
+        await params
+      ).poolId,
       problemId,
       timeTaken,
       leetcodeSubmissionId
@@ -61,7 +63,7 @@ export async function POST(
 
     log(LogLevel.INFO, "Problem submitted", {
       userId: user.id,
-      poolId: params.poolId,
+      poolId: (await params).poolId,
       problemId,
     });
 

@@ -23,3 +23,7 @@
 //     return errorResponse(error.message, 500);
 //   }
 // }
+
+export async function POST(request: Request) {
+  return new Response("LeetCode sync is currently disabled.", { status: 503 });
+}

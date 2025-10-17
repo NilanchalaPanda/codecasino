@@ -1,7 +1,8 @@
-@import "tailwindcss";
-
 /* Import your chosen fonts */
 @import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Orbitron:wght@500;700&display=swap");
+
+/* Import Tailwind CSS */
+@import "tailwindcss";
 
 /* Define base theme colors and fonts */
 :root {

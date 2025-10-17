@@ -4,10 +4,10 @@ import { errorResponse, successResponse } from "@/lib/utils/response";
 
 export async function GET(
   request: Request,
-  { params }: { params: { poolId: string } }
+  { params }: { params: Promise<{ poolId: string }> }
 ) {
   try {
-    const { poolId } = params;
+    const { poolId } = await params;
     const pool = await poolService.getPoolDetailsById(poolId);
 
     if (!pool) {

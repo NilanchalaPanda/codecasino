@@ -5,22 +5,22 @@ import { errorResponse, successResponse } from "@/lib/utils/response";
 
 export async function GET(
   request: Request,
-  { params }: { params: { poolId: string } }
+  { params }: { params: Promise<{ poolId: string }> }
 ) {
   try {
     const user = await requireAuth();
     const progress = await gameService.getParticipantProgress(
-      params.poolId,
+      (await params).poolId,
       user.id
     );
 
     if (!progress) {
-      return errorResponse('Progress not found', 404);
+      return errorResponse("Progress not found", 404);
     }
 
     return successResponse(progress);
   } catch (error: any) {
-    log(LogLevel.ERROR, 'Get progress error', error);
+    log(LogLevel.ERROR, "Get progress error", error);
     return errorResponse(error.message, 500);
   }
 }

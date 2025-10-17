@@ -5,7 +5,7 @@ import { errorResponse, successResponse } from "@/lib/utils/response";
 
 export async function GET(
   request: Request,
-  { params }: { params: { tier: string } }
+  { params }: { params: Promise<{ tier: string }> }
 ) {
   try {
     const { searchParams } = new URL(request.url);
@@ -13,12 +13,12 @@ export async function GET(
     const limit = parseInt(searchParams.get("limit") || "50");
 
     const validTiers: string[] = Object.values(TierLevel);
-    if (!validTiers.includes(params.tier)) {
+    if (!validTiers.includes((await params).tier)) {
       return errorResponse("Invalid tier", 400);
     }
 
     // Cast the string to TierLevel enum
-    const tier: TierLevel = params.tier as TierLevel;
+    const tier: TierLevel = (await params).tier as TierLevel;
 
     const leaderboard = await leaderboardService.getTierLeaderboard(
       tier, // Pass the correct type here
