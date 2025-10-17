@@ -10,7 +10,7 @@ import {
 const HeroSection = () => {
   return (
     <section className="flex flex-col items-center justify-center min-h-screen text-center bg-background px-4">
-      <h1 className="font-display font-semibold text-6xl sm:text-7xl mb-4 text-cyan">
+      <h1 className="font-display font-semibold text-6xl sm:text-4xl mb-4 text-cyan">
         Code<span className="text-foreground">Casino</span>
       </h1>
       <p className="text-secondary text-lg max-w-2xl mb-8">
