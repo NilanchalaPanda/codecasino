@@ -115,7 +115,7 @@ export const POOL_BET_TYPES = {
 
 export const POWER_UP_EFFECTS = {
   EXTRA_TIME: 300, // 5 minutes in seconds
-  HINT_REVEAL: 1, // reveal 1 hint
+  HINT_REVEAL: 1, // reveal 1 
   SKIP_PENALTY: 0, // no penalty for skipping
   PROGRESS_REVEAL_TOP: 3, // show top 3 players
 };
