@@ -1,3 +1,7 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+
 interface BattleCardProps {
   battle: {
     id: string;
@@ -12,8 +16,17 @@ interface BattleCardProps {
 }
 
 export default function BattleCard({ battle }: BattleCardProps) {
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push(`/battle/${battle.id}`);
+  };
+
   return (
-    <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 transition-all duration-300 hover:border-cyan">
+    <div
+      onClick={handleClick}
+      className="bg-gray-800 border border-gray-700 rounded-lg p-4 transition-all duration-300 hover:border-cyan cursor-pointer"
+    >
       <div className="flex justify-between items-center mb-2">
         <h3 className="font-display text-xl text-cyan">{battle.type}</h3>
         <span
@@ -44,7 +57,13 @@ export default function BattleCard({ battle }: BattleCardProps) {
       </div>
       <div className="flex justify-between items-center">
         <span className="text-gray-400 text-sm">{battle.time}</span>
-        <button className="px-4 py-1 bg-cyan text-background rounded-md text-sm font-mono hover:bg-cyan/80 transition-colors">
+        <button
+          onClick={(e) => {
+            e.stopPropagation(); // 👈 prevent navigating when clicking button
+            router.push(`/battle/${battle.id}`);
+          }}
+          className="px-4 py-1 bg-cyan text-background rounded-md text-sm font-mono hover:bg-cyan/80 transition-colors"
+        >
           Join
         </button>
       </div>

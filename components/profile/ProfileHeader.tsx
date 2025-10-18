@@ -71,12 +71,12 @@ export default function ProfileHeader({ user }: ProfileHeaderProps) {
                 {user.tierPoints} TP
               </span>
             </div>
-            <div className="flex items-center gap-1 text-gray-400 text-sm">
+            {/* <div className="flex items-center gap-1 text-gray-400 text-sm">
               <Calendar className="w-4 h-4" />
               <span>
                 Member since {new Date(user.createdAt).toLocaleDateString()}
               </span>
-            </div>
+            </div> */}
           </div>
 
           <p className="text-gray-400 mb-4">{user.bio}</p>
