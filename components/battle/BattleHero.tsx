@@ -29,7 +29,7 @@ export default function BattleHero() {
         Choose your battle format and prove your coding skills against
         developers worldwide
       </p>
-      <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+      <div className="mt-12 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {battleDetails.map((item) => (
           <div
             key={item.desc}

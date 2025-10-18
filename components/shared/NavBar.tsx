@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Code2,
   Home,
@@ -28,6 +28,11 @@ export default function Navbar() {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  // ✅ Close mobile menu whenever the pathname changes
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [pathname]);
+
   return (
     <nav className="relative bg-[#0d0d0d] shadow-lg shadow-black/50">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-10 py-3">
@@ -38,7 +43,7 @@ export default function Navbar() {
             e.preventDefault();
             router.push("/");
           }}
-          className="flex items-center gap-2 text-[#00d9ff] text-xl sm:text-2xl font-display transition-all duration-300 hover:scale-[1.05]"
+          className="font-semibold flex items-center gap-2 text-[#00d9ff] text-xl sm:text-2xl font-display transition-all duration-300 hover:scale-[1.05]"
         >
           <Code2 className="h-7 w-7 text-[#00d9ff]" />
           <span>CodeCasino</span>
@@ -70,16 +75,14 @@ export default function Navbar() {
           })}
         </div>
 
-        {/* Right Side - VP, Notification, User (Desktop & Mobile) */}
+        {/* Right Side - VP, Notification, User */}
         <div className="flex items-center gap-2 sm:gap-3">
-          {/* VP Display with Bordered Look (Hidden on tiny screens) */}
           <div className="hidden xs:flex items-center gap-1 sm:gap-2 bg-gray-800 px-3 py-2 rounded-lg text-xs sm:text-sm text-[#ffa500] font-semibold border border-gray-700 shadow-sm shadow-orange-900/50">
             <Crown size={16} className="text-[#ffa500]" />
             <span className="hidden sm:inline">2,450 VP</span>
             <span className="sm:hidden">2.4K</span>
           </div>
 
-          {/* Notification Icon */}
           <Link href="/notifications" className="hover:cursor-pointer">
             <button
               className={`p-2 rounded-lg bg-gray-800 border border-gray-700 hover:border-[#00d9ff] transition duration-300 shadow-sm hover:shadow-cyan-900/50`}
@@ -88,7 +91,7 @@ export default function Navbar() {
             </button>
           </Link>
 
-          {/* Mobile Menu Button (Mobile Only) */}
+          {/* Mobile Menu Button */}
           <button
             className="p-2 rounded-lg bg-gray-800 border border-gray-700 hover:border-[#00d9ff] transition duration-300 sm:hidden"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -100,7 +103,6 @@ export default function Navbar() {
             )}
           </button>
 
-          {/* User Icon (Desktop Only - Mobile User icon is in menu) */}
           <Link href={"/profile"} className="hover:cursor-pointer">
             <button className="hidden sm:block p-2 rounded-lg bg-gray-800 border border-gray-700 hover:border-[#00d9ff] transition duration-300 shadow-sm hover:shadow-cyan-900/50">
               <User size={18} className="text-gray-400 hover:text-[#00d9ff]" />
@@ -109,7 +111,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu Dropdown Panel */}
+      {/* Mobile Menu Dropdown */}
       <div
         className={clsx(
           "absolute w-full z-10 bg-[#0d0d0d] shadow-2xl transition-all duration-300 ease-in-out sm:hidden",
@@ -141,7 +143,7 @@ export default function Navbar() {
               </a>
             );
           })}
-          {/* Mobile User Profile Link */}
+
           <a
             href="#"
             onClick={(e) => {
