@@ -1,9 +1,10 @@
+import CreateBattlePage from "@/components/battle/CreateBattle";
 import React from "react";
 
 const page = () => {
   return (
-    <div className="w-full p-10 text-2xl font-mono text-center">
-      BATTLE COMING SOON
+    <div>
+      <CreateBattlePage />
     </div>
   );
 };
