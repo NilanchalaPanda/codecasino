@@ -20,6 +20,7 @@ const navLinks = [
   { name: "Home", href: "/", icon: Home },
   { name: "Battle", href: "/battle", icon: Swords },
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { name: "Leaderboard", href: "/leaderboard", icon: Crown },
   { name: "Store", href: "/store", icon: ShoppingBag },
 ];
 
