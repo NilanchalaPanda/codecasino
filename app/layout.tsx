@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, JetBrains_Mono, Orbitron } from "next/font/google";
+import { JetBrains_Mono, Orbitron } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/shared/NavBar";
 
