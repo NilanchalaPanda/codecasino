@@ -30,7 +30,7 @@ export default function Navbar() {
 
   return (
     <nav className="relative bg-[#0d0d0d] shadow-lg shadow-black/50">
-      <div className="flex items-center justify-between px-4 sm:px-10 py-3">
+      <div className="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-10 py-3">
         {/* Left Logo */}
         <a
           href="#"

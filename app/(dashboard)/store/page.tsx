@@ -1,11 +1,26 @@
-import React from "react";
+"use client";
+import { useState } from "react";
+import StoreHero from "@/components/store/StoreHero";
+import StoreTabs from "@/components/store/StoreTabs";
+import PowerUpsTab from "@/components/store/PowerUpsTabs";
+import BundlesTab from "@/components/store/BundlesTab";
+import SpecialItemsTab from "@/components/store/SpecialItemsTab";
+import PurchaseVP from "@/components/store/PurchaseVP";
 
-const page = () => {
+export default function StorePage() {
+  const [activeTab, setActiveTab] = useState<
+    "Power-Ups" | "Bundles" | "Special Items"
+  >("Power-Ups");
+
   return (
-    <div className="w-full p-10 text-2xl font-mono text-center">
-      STORE COMING SOON
+    <div className="min-h-screen bg-background text-foreground">
+      <StoreHero />
+      <StoreTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+      {activeTab === "Power-Ups" && <PowerUpsTab />}
+      {activeTab === "Bundles" && <BundlesTab />}
+      {activeTab === "Special Items" && <SpecialItemsTab />}
+
+      <PurchaseVP />
     </div>
   );
-};
-
-export default page;
+}
