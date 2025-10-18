@@ -1,21 +1,18 @@
 "use client";
 import { useState } from "react";
-import BattleTypeCard from "./BattleTypeCard";
-import DifficultyCard from "./DifficultyCard";
+import BattleTypeCard from "@/components/battle/BattleTypeCard";
+import DifficultyCard from "@/components/battle/DifficultyCard";
 import { Timer, Zap, SkipForward, User } from "lucide-react";
 
-export default function CreateBattlePage() {
+export default function CreateBattleForm() {
   const [selectedType, setSelectedType] = useState<string | null>(null);
-  const [selectedDifficulty, setSelectedDifficulty] = useState<string | null>(
-    null
-  );
+  const [selectedDifficulty, setSelectedDifficulty] = useState<string | null>(null);
 
   const battleTypes = [
     {
       id: "marathon",
       name: "Marathon",
-      description:
-        "Long-form coding battle with complex algorithmic challenges",
+      description: "Long-form coding battle with complex algorithmic challenges",
       duration: "60 min",
       problems: "4-6 problems",
       entry: "50 VP",
@@ -65,20 +62,13 @@ export default function CreateBattlePage() {
       alert("Please select both a battle type and difficulty.");
       return;
     }
-    // Logic to create the battle
     console.log(`Creating battle: ${selectedType} (${selectedDifficulty})`);
   };
 
   return (
-    <div className="max-w-6xl mx-auto min-h-screen bg-background text-foreground p-6">
-      <h1 className="font-display text-3xl mb-8 text-cyan">
-        ⊕ Create New Battle
-      </h1>
-
+    <div>
       <div className="mb-8">
-        <h2 className="font-display text-xl mb-4 text-cyan">
-          Select Game Type
-        </h2>
+        <h2 className="font-display text-xl mb-4 text-cyan">Select Game Type</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {battleTypes.map((type) => (
             <BattleTypeCard
@@ -92,9 +82,7 @@ export default function CreateBattlePage() {
       </div>
 
       <div className="mb-8">
-        <h2 className="font-display text-xl mb-4 text-cyan">
-          Select Difficulty
-        </h2>
+        <h2 className="font-display text-xl mb-4 text-cyan">Select Difficulty</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {difficulties.map((difficulty) => (
             <DifficultyCard
@@ -105,14 +93,14 @@ export default function CreateBattlePage() {
             />
           ))}
         </div>
-
-        <button
-          onClick={handleCreateBattle}
-          className="mt-6 w-full py-3 bg-cyan text-background font-display text-xl rounded-lg hover:bg-cyan/80 transition-colors"
-        >
-          ⚔ Create Battle
-        </button>
       </div>
+
+      <button
+        onClick={handleCreateBattle}
+        className="w-full py-3 bg-cyan text-background font-display text-xl rounded-lg hover:bg-cyan/80 transition-colors"
+      >
+        ⚔ Create Battle
+      </button>
     </div>
   );
 }
