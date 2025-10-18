@@ -13,21 +13,23 @@ export default function LeaderboardPage() {
   // Mock data - replace with actual API call
   const topPlayers = [
     {
-      id: 1,
-      username: "marion_stiedemann",
-      rank: 1,
+      id: 2,
+      username: "shannon_kautzer",
+      rank: 2,
       volume: 1671.57,
-      avatar:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3Po_OLjQH3rbq4RZ5amr1qbhWnoReDM395Q&s",
+      avatar:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSAuOywhbJamFQlpYsEvQ3OOiAYOeewJwYcqw&s",
       won: 2.0,
       trades: 5,
       winRate: 34.07,
     },
     {
-      id: 2,
-      username: "shannon_kautzer",
-      rank: 2,
+      id: 1,
+      username: "marion_stiedemann",
+      rank: 1,
       volume: 1671.57,
-      avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSAuOywhbJamFQlpYsEvQ3OOiAYOeewJwYcqw&s",
+      avatar:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3Po_OLjQH3rbq4RZ5amr1qbhWnoReDM395Q&s",
       won: 2.0,
       trades: 5,
       winRate: 34.07,
@@ -37,7 +39,8 @@ export default function LeaderboardPage() {
       username: "arthur_grimes",
       rank: 3,
       volume: 1671.57,
-      avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTj_UkBWZBjd-K5TxEQuPAUd6Gj7BKFBsR49A&s",
+      avatar:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTj_UkBWZBjd-K5TxEQuPAUd6Gj7BKFBsR49A&s",
       won: 2.0,
       trades: 5,
       winRate: 34.07,
@@ -125,7 +128,7 @@ export default function LeaderboardPage() {
       <div className="max-w-7xl mx-auto">
         <LeaderboardHeader />
 
-        <div className="mt-6">
+        {/* <div className="mt-6">
           <LeaderboardFilters
             timePeriod={timePeriod}
             setTimePeriod={setTimePeriod}
@@ -134,13 +137,13 @@ export default function LeaderboardPage() {
             tier={tier}
             setTier={setTier}
           />
-        </div>
+        </div> */}
 
         <div className="mt-8 relative">
           <LeaderboardTopPlayers players={topPlayers} />
         </div>
 
-        <div className="mt-12">
+        <div>
           <LeaderboardTable data={leaderboardData} />
         </div>
       </div>

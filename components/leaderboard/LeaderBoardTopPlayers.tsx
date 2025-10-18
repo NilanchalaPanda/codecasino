@@ -17,217 +17,112 @@ export default function LeaderboardTopPlayers({
   players,
 }: LeaderboardTopPlayersProps) {
   return (
-    <div className="relative">
-      {/* Podium structure */}
-      <div className="absolute inset-0 flex justify-center items-end pointer-events-none">
-        {/* Podium base */}
-        <div className="w-[90%] max-w-4xl h-32 bg-gray-800/70 rounded-t-xl border-t border-x border-gray-700 flex">
-          <div className="w-1/3 border-r border-gray-700"></div>
-          <div className="w-1/3 border-r border-gray-700"></div>
-          <div className="w-1/3"></div>
-        </div>
-
-        {/* Podium steps */}
-        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-[90%] max-w-4xl h-40 flex">
-          <div className="w-1/3 flex justify-center">
-            <div className="h-20 w-24 bg-gray-700/50 rounded-t-lg border-t border-l border-r border-gray-600"></div>
-          </div>
-          <div className="w-1/3 flex justify-center">
-            <div className="h-32 w-32 bg-gray-700/50 rounded-t-lg border-t border-l border-r border-gray-600"></div>
-          </div>
-          <div className="w-1/3 flex justify-center">
-            <div className="h-24 w-24 bg-gray-700/50 rounded-t-lg border-t border-l border-r border-gray-600"></div>
-          </div>
-        </div>
-      </div>
-
-      {/* Players on podium */}
-      <div className="relative flex justify-center px-4 sm:px-0">
-        {players.map((player, index) => (
-          <div
-            key={player.id}
-            className={`flex flex-col items-center z-${10 + (3 - index) * 10} ${
-              index === 0
-                ? "w-1/3"
-                : index === 1
-                ? "w-1/3 -mt-4"
-                : "w-1/3 -mt-8"
-            }`}
-          >
-            <div className="relative">
-              {/* Rank badge for mobile */}
-              <div
-                className="sm:hidden absolute -top-2 -left-2 bg-gray-900 px-2 py-1 rounded-full text-xs font-bold"
-                style={{
-                  color:
-                    index === 0
-                      ? "#d4af37"
-                      : index === 1
-                      ? "#a7a7ad"
-                      : index === 2
-                      ? "#cd7f32"
-                      : "#fff",
-                }}
-              >
-                #{player.rank}
-              </div>
-
-              {/* Player avatar with border based on rank */}
-              <div
-                className={`rounded-lg border-4 overflow-hidden ${
-                  index === 0
-                    ? "border-yellow-400"
-                    : index === 1
-                    ? "border-gray-300"
-                    : "border-yellow-600"
-                }`}
-                style={{
-                  width: index === 0 ? "120px" : index === 1 ? "100px" : "90px",
-                  height:
-                    index === 0 ? "120px" : index === 1 ? "100px" : "90px",
-                }}
-              >
-                <img
-                  src={player.avatar}
-                  alt={player.username}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-
-              {/* Rank badge for desktop */}
-              <div
-                className="hidden sm:block absolute -top-2 -right-2 bg-gray-900 px-2 py-1 rounded-full text-xs font-bold"
-                style={{
-                  color:
-                    index === 0
-                      ? "#d4af37"
-                      : index === 1
-                      ? "#a7a7ad"
-                      : index === 2
-                      ? "#cd7f32"
-                      : "#fff",
-                }}
-              >
-                #{player.rank}
-              </div>
-            </div>
-
-            <div className="mt-2 text-center">
-              <div className="font-display text-sm sm:text-base text-gray-300">
-                {player.username}
-              </div>
-              <div className="flex items-center justify-center gap-1 mt-1">
-                <span className="text-cyan">$</span>
-                <span className="text-yellow-400 font-mono text-sm">
-                  {player.volume.toFixed(2)}
-                </span>
-                <span className="text-gray-400 text-xs">VOLUME</span>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-} 
-
-/*
-interface Player {
-  id: number;
-  username: string;
-  rank: number;
-  volume: number;
-  avatar: string;
-  won: number;
-  trades: number;
-  winRate: number;
-}
-
-interface LeaderboardTopPlayersProps {
-  players: Player[];
-}
-
-export default function LeaderboardTopPlayers({
-  players,
-}: LeaderboardTopPlayersProps) {
-  return (
-    <div className="relative flex justify-center items-end h-64 sm:h-80 w-full px-4 sm:px-0">
-      <div className="absolute bottom-0 w-full max-w-3xl h-20 bg-gray-800/70 rounded-t-xl border-t border-x border-gray-700 flex">
-        <div className="w-1/3 border-r border-gray-700"></div>
-        <div className="w-1/3 border-r border-gray-700"></div>
-        <div className="w-1/3"></div>
-      </div>
-
-      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-3xl h-40 flex justify-center">
-        
-        <div className="w-1/3 flex justify-center">
-          <div className="h-20 w-20 sm:h-24 sm:w-24 bg-gray-700/50 rounded-t-lg border-t border-l border-r border-gray-600"></div>
-        </div>
-        
-        <div className="w-1/3 flex justify-center">
-          <div className="h-32 w-28 sm:h-40 sm:w-32 bg-gray-700/50 rounded-t-lg border-t border-l border-r border-gray-600"></div>
-        </div>
-
-        <div className="w-1/3 flex justify-center">
-          <div className="h-16 w-16 sm:h-20 sm:w-20 bg-gray-700/50 rounded-t-lg border-t border-l border-r border-gray-600"></div>
-        </div>
-      </div>
-
-      <div className="relative flex justify-center w-full max-w-3xl">
-        {players.slice(0, 3).map((player, index) => (
-          <div
-            key={player.id}
-            className={`flex flex-col items-center z-${10 + (3 - index) * 10} ${
-              index === 0
-                ? "w-1/3 order-2 -mb-4"
-                : index === 1
-                ? "w-1/3 order-1 -mb-2"
-                : "w-1/3 order-3 -mb-1"
-            }`}
-          >
-            <div
-              className={`relative rounded-lg overflow-hidden border-4 ${
-                index === 0
-                  ? "border-yellow-400 w-20 h-20 sm:w-24 sm:h-24"
-                  : index === 1
-                  ? "border-gray-300 w-16 h-16 sm:w-20 sm:h-20"
-                  : "border-yellow-600 w-14 h-14 sm:w-18 sm:h-18"
-              }`}
-            >
+    <div className="flex justify-center min-h-96 items-end font-mono relative overflow-hidden">
+      {players.map((player) => (
+        <div
+          key={player.rank}
+          className={`relative flex flex-col items-center justify-end text-center rounded-lg
+          ${player.rank === 1 ? "h-64" : player.rank === 2 ? "h-60" : "h-52"}
+          w-56 bg-gradient-to-b from-gray-900 to-black border border-gray-700 shadow-[0_0_25px_rgba(0,255,255,0.2)] transform`}
+          style={{
+            transform: `translateY(${
+              player.rank === 1 ? "0" : player.rank === 2 ? "20px" : "40px"
+            })`,
+          }}
+        >
+          {/* Avatar */}
+          <div className="absolute -top-20">
+            <div className="w-24 h-24 rounded-md overflow-hidden border-2 border-gray-600 shadow-lg bg-gray-800">
               <img
                 src={player.avatar}
                 alt={player.username}
-                className="w-full h-full object-cover"
+                width={96}
+                height={96}
+                className="object-cover"
               />
-              <div
-                className={`absolute -top-2 -right-2 bg-gray-900 px-2 py-1 rounded-full text-xs font-bold ${
-                  index === 0
-                    ? "text-yellow-400"
-                    : index === 1
-                    ? "text-gray-300"
-                    : "text-yellow-600"
-                }`}
-              >
-                #{player.rank}
-              </div>
-            </div>
-            
-            <div className="mt-2 text-center">
-              <div className="font-display text-sm sm:text-base text-gray-300">
-                {player.username}
-              </div>
-              <div className="flex items-center justify-center gap-1 mt-1">
-                <span className="text-cyan">$</span>
-                <span className="text-yellow-400 font-mono text-sm">
-                  {player.volume.toFixed(2)}
-                </span>
-                <span className="text-gray-400 text-xs">VOLUME</span>
-              </div>
             </div>
           </div>
-        ))}
-      </div>
+
+          {/* Username */}
+          <div className="absolute top-8">
+            <span
+              className={`text-sm ${
+                player.rank === 1 ? "text-green-400" : "text-gray-300"
+              }`}
+            >
+              [{player.rank}] {player.username}
+            </span>
+            <p className="text-blue-400 font-semibold text-lg">
+              {player.volume.toLocaleString()}
+            </p>
+          </div>
+
+          {/* Imaginary glowing edges */}
+          <div className="absolute inset-0 rounded-lg border border-green-500/20 pointer-events-none"></div>
+
+          {/* Podium base glow */}
+          {/* <div className="absolute bottom-0 w-full h-2 bg-green-400/20 blur-sm rounded-b-lg"></div> */}
+        </div>
+      ))}
     </div>
   );
 }
-*/
+
+// export default function LeaderboardTopPlayers({
+//   players,
+// }: LeaderboardTopPlayersProps) {
+//   // Podium settings for 1st, 2nd, 3rd
+//   const heights = [100, 150, 100]; // Visual hierarchy
+//   const zIndexes = [10, 30, 10]; // 1st place has the highest z-index
+//   const colors = [
+//     "from-gray-400 to-gray-700", // 2nd
+//     "from-yellow-400 to-yellow-700", // 1st
+//     "from-orange-400 to-orange-700", // 3rd
+//   ];
+
+//   return (
+//     <div className="flex justify-center items-end gap-4 sm:gap-8 py-10">
+//       {players.slice(0, 3).map((player, i) => (
+//         <div
+//           key={player.rank}
+//           className="flex flex-col items-center"
+//           style={{ zIndex: zIndexes[i] }}
+//         >
+//           {/* Player Avatar */}
+//           <div
+//             className="relative z-40 -mb-4 w-20 h-20 rounded-xl overflow-hidden border-4"
+//             style={{
+//               borderColor:
+//                 i === 0 ? "#d4af37" : i === 1 ? "#a7a7ad" : "#cd7f32",
+//             }}
+//           >
+//             <img
+//               src={player.avatar}
+//               alt={player.username}
+//               className="object-cover w-full h-full"
+//             />
+//           </div>
+
+//           {/* Podium Cube */}
+//           <div
+//             className="podium-cube relative"
+//             style={{ height: `${heights[i]}px` }}
+//           >
+//             {/* Front Face */}
+//             <div
+//               className={`podium-front absolute bg-gradient-to-b ${colors[i]}`}
+//             />
+//               {/* <span className="font-bold text-lg">{player.username}</span>
+//               <span className="text-sm opacity-80">
+//                 {player.volume.toLocaleString()}
+//               </span>
+//             </div> */}
+
+//             {/* Top Face */}
+//             <div className="podium-top absolute"></div>
+//           </div>
+//         </div>
+//       ))}
+//     </div>
+//   );
+// }
