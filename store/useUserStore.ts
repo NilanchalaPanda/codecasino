@@ -9,7 +9,6 @@ type User = {
   avatar_url: string;
   vp_balance: number;
   vp_lifetime_earned: number;
-  // Add other fields as needed
 };
 
 type UserStore = {
@@ -33,7 +32,9 @@ export const useUserStore = create<UserStore>((set) => ({
     if (user) {
       const { data: profile } = await supabase
         .from("profiles")
-        .select("*")
+        .select(
+          "id, email, display_name, avatar_url, vp_balance, vp_lifetime_earned"
+        )
         .eq("id", user.id)
         .single();
       set({ user: profile, session, isLoading: false });
