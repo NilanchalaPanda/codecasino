@@ -1,5 +1,5 @@
-// components/providers/UserProvider.tsx
 "use client";
+
 import { useUserStore } from "@/store/useUserStore";
 import { useEffect } from "react";
 
