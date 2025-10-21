@@ -5,9 +5,14 @@ import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   try {
+    const url =
+      process.env.NODE_ENV === "development"
+        ? process.env.NEXT_PUBLIC_SUPABASE_REDIRECT_URL_DEV
+        : process.env.NEXT_PUBLIC_SUPABASE_REDIRECT_URL_PROD;
+
     const { searchParams } = new URL(request.url);
     const code = searchParams.get("code");
-    const next = searchParams.get("next") || "http://localhost:3000/dashboard";
+    const next = searchParams.get("next") || `${url}dashboard`;
     if (!code) {
       return errorResponse("No authorization code received", 400);
     }
@@ -29,18 +34,12 @@ export async function GET(request: Request) {
       console.log("Get User Error - ", getUserError);
     }
 
-    console.log("userdata - ", user);
-
     if (user) {
       const { data: profile, error: fetchError } = await supabase
         .from("profiles")
         .select("*")
         .eq("id", user.id)
         .single();
-
-      if (fetchError) {
-        console.log("User fetching error - ", fetchError);
-      }
 
       const userData = {
         id: user.id,

@@ -102,6 +102,11 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const url =
+    process.env.NODE_ENV === "development"
+      ? process.env.NEXT_PUBLIC_SUPABASE_REDIRECT_URL_DEV
+      : process.env.NEXT_PUBLIC_SUPABASE_REDIRECT_URL_PROD;
+
   const handleGoogleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -110,14 +115,14 @@ export default function LoginPage() {
       await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: "http://localhost:3000/api/auth/callback"
-        }
+          redirectTo: `${url}api/auth/callback`,
+        },
       });
     } catch (e) {
       console.log("error", e);
     }
   };
-  
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
