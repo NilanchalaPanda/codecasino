@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono, Orbitron } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/shared/NavBar";
 
 const jetbrains = JetBrains_Mono({
   subsets: ["latin"],
@@ -27,7 +26,6 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning={true} data-qb-installed="true">
       <body className={`${jetbrains.variable} ${orbitron.variable}`}>
-        <Navbar />
         {children}
       </body>
     </html>

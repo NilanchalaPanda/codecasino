@@ -93,6 +93,7 @@
 import { useState } from "react";
 import { Code, User, Lock, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
+import { supabase } from "@/lib/supabase/client";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -101,6 +102,22 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const handleGoogleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
+    try {
+      await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: "http://localhost:3000/api/auth/callback"
+        }
+      });
+    } catch (e) {
+      console.log("error", e);
+    }
+  };
+  
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -120,7 +137,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="mt-8 bg-background flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
       {/* Decorative elements */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-10">
         <div className="absolute -left-20 -top-20 w-60 h-60 bg-cyan/10 rounded-full mix-blend-overlay filter blur-xl"></div>
@@ -247,7 +264,10 @@ export default function LoginPage() {
                 </svg>
                 Continue with GitHub
               </button>
-              <button className="w-full py-2 px-4 rounded-lg bg-gray-700 hover:bg-gray-600 text-foreground flex items-center justify-center gap-2 transition-colors">
+              <button
+                onClick={handleGoogleLogin}
+                className="w-full py-2 px-4 rounded-lg bg-gray-700 hover:bg-gray-600 text-foreground flex items-center justify-center gap-2 transition-colors"
+              >
                 <svg
                   className="h-5 w-5"
                   viewBox="0 0 24 24"
@@ -255,7 +275,7 @@ export default function LoginPage() {
                 >
                   <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 1.467-4.72 1.467-3.03 0-5.66-2.13-5.66-5.25S7.53 7.09 10.56 7.09c1.56 0 2.52.47 3.28 1.09 1.41-1.41 3.5-2.48 6.14-2.48 1.14 0 2.2.2 3.13.65v2.24H12.48z" />
                 </svg>
-                Continue with LeetCode
+                Continue with Google
               </button>
             </div>
 

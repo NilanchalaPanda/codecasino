@@ -1,5 +1,6 @@
 import React from "react";
 import type { Metadata } from "next";
+import Navbar from "@/components/shared/NavBar";
 
 export const metadata: Metadata = {
   title: "Dashboard | CodeCasino",
@@ -13,6 +14,7 @@ export default function DashboardLayout({
 }) {
   return (
     <div>
+      <Navbar />
       {children}
     </div>
   );
