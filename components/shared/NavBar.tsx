@@ -133,7 +133,7 @@ export default function Navbar() {
             </>
           ) : (
             <Link href="/login" className="hover:cursor-pointer">
-              <button className="hidden sm:block px-3 py-1 bg-cyan rounded-lg text-sm font-medium transition duration-300 hover:bg-cyan/90">
+              <button className="hidden sm:block px-3 py-1 bg-cyan rounded-lg text-black text-md font-semibold hover:cursor-pointer transition duration-300 hover:bg-cyan/90">
                 Login
               </button>
             </Link>
