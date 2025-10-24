@@ -104,3 +104,26 @@ body {
   width: 210px;
   margin-top: -80px;
 }
+
+
+.split {
+  display: flex;
+  height: 100%;
+}
+
+.split.gutter {
+  /* background-color: var(--color-gray-600); */
+  background-color: red;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.split.gutter.gutter-horizontal {
+  cursor: col-resize;
+  width: 8px;
+}
+
+.split.gutter.gutter-vertical {
+  cursor: row-resize;
+  height: 8px;
+}
