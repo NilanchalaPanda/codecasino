@@ -4,10 +4,12 @@ import HeroSection from "@/components/home/HeroSection";
 import WhyChoose from "@/components/home/WhyChoose";
 import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/NavBar";
+import NewsTicker from "@/components/shared/NewsTicker";
 
 export default function HomePage() {
   return (
     <main>
+      <NewsTicker />
       <Navbar />
       <HeroSection />
       <WhyChoose />
