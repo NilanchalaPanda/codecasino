@@ -30,6 +30,7 @@ const Workspace = ({ problems }: Props) => {
                 className="split h-full flex"
                 direction="horizontal"
                 sizes={[50, 50]}
+                gutterSize={6}
                 minSize={400}
             >
                 <ProblemDescription problems={problems} />

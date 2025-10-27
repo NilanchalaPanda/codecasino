@@ -1,41 +1,72 @@
-"use client"
-import React from 'react'
-import { ChevronUp } from 'lucide-react'
+// components/workspace/playground/console/Console.tsx
+"use client";
+import React, { useState, memo } from 'react';
 
 type Props = {
-    handleRun: () => void
-    handleSubmit: () => void
-    output: string | null
-}
+    handleRun: () => void;
+    handleSubmit: () => void;
+    output: string | null;
+    isExecuting?: boolean;
+};
 
-const UserConsole = ({ handleRun, handleSubmit, output }: Props) => {
+const UserConsole = ({ handleRun, handleSubmit, output, isExecuting = false }: Props) => {
+    const [showOutput, setShowOutput] = useState(false);
+
     return (
-        <div className="flex h-fit min-h-[10vh] max-h-[35vh] bg-[var(--color-gray-700)] bottom-0 w-full overflow-hidden">
-            <div className="mx-5 my-[10px] flex justify-between w-full">
-                <div className="mr-2 flex flex-1 flex-nowrap items-center space-x-4">
-                    <button className="px-3 py-1.5 font-medium items-center transition-all inline-flex bg-[var(--color-gray-600)] text-sm hover:bg-[var(--color-gray-500)] text-[var(--foreground)] rounded-lg pl-3 pr-2">
-                        Console
-                        <div className="ml-1 transform transition flex items-center">
-                            <ChevronUp className="mx-1" color="grey" size={16} />
-                        </div>
-                    </button>
-                </div>
-                <div className="ml-auto flex items-center space-x-4">
+        <div className="w-full">
+            {/* Control Buttons */}
+            <div className="flex justify-between items-center p-3 bg-[var(--color-gray-700)]">
+                <div className="flex gap-3">
                     <button
-                        className="px-3 py-1.5 text-sm font-medium items-center whitespace-nowrap transition-all focus:outline-none inline-flex bg-[var(--color-gray-600)] hover:bg-[var(--color-gray-500)] text-[var(--foreground)] rounded-lg"
                         onClick={handleRun}
+                        disabled={isExecuting}
+                        className="px-6 py-2 rounded-lg font-medium text-sm transition-all transform hover:scale-105
+                       bg-[var(--color-gray-600)] text-[var(--foreground)] 
+                       hover:bg-[var(--color-cyan)] hover:text-[var(--color-gray-900)]
+                       disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none
+                       border border-[var(--color-gray-500)] hover:border-[var(--color-cyan)]
+                       shadow-lg hover:shadow-cyan-500/50"
                     >
-                        Run
+                        {isExecuting ? '⏳ Running...' : '▶️ Run Code'}
                     </button>
+
                     <button
-                        className="px-3 py-1.5 font-medium items-center transition-all focus:outline-none inline-flex text-sm text-[var(--foreground)] bg-[var(--color-orange-accent)] hover:bg-[var(--color-cyan)] rounded-lg"
-                        onClick={handleSubmit}
+                        onClick={() => setShowOutput(!showOutput)}
+                        className="px-4 py-2 rounded-lg font-medium text-sm transition-all
+                       bg-[var(--color-gray-600)] text-[var(--foreground)] 
+                       hover:bg-[var(--color-gray-500)]
+                       border border-[var(--color-gray-500)]"
                     >
-                        Submit
+                        {showOutput ? '▼ Hide Output' : '▶ Show Output'}
                     </button>
                 </div>
+
+                <button
+                    onClick={handleSubmit}
+                    disabled={isExecuting}
+                    className="px-8 py-2 rounded-lg font-bold text-sm transition-all transform hover:scale-105
+                     bg-gradient-to-r from-[var(--color-cyan)] to-[#00ff88] 
+                     text-[var(--color-gray-900)]
+                     hover:shadow-2xl hover:shadow-cyan-500/50
+                     disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none
+                     animate-pulse-slow"
+                >
+                    {isExecuting ? '📤 Submitting...' : '✅ Submit Solution'}
+                </button>
             </div>
+
+            {/* Output Panel */}
+            {showOutput && output && (
+                <div className="p-4 bg-[var(--color-gray-800)] border-t border-[var(--color-gray-600)]">
+                    <div className="bg-[var(--color-gray-900)] rounded-lg p-4 font-mono text-sm 
+                          text-[var(--foreground)] overflow-auto max-h-64
+                          border border-[var(--color-gray-600)]">
+                        <pre className="whitespace-pre-wrap">{output}</pre>
+                    </div>
+                </div>
+            )}
         </div>
-    )
-}
-export default UserConsole
+    );
+};
+
+export default memo(UserConsole);

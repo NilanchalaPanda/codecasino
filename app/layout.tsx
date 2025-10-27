@@ -26,7 +26,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning={true} data-qb-installed="true">
-      <body className={`${jetbrains.variable} ${orbitron.variable}`}>
+      {/* <body className={`${jetbrains.variable} ${orbitron.variable}`}> */}
+      <body>
         <UserProvider>{children}</UserProvider>
       </body>
     </html>

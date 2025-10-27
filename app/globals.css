@@ -44,6 +44,61 @@ body {
   line-height: 1.6;
 }
 
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-gray-800);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-gray-600);
+  border-radius: 5px;
+  transition: background 0.3s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-cyan);
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: inherit;
+  scrollbar-color: var(--color-gray-600) var(--color-gray-800);
+}
+
+/* Split.js gutter styling */
+.gutter {
+  background-color: var(--color-gray-600);
+  background-repeat: no-repeat;
+  background-position: 50%;
+  transition: all 0.3s ease;
+}
+
+.gutter:hover {
+  background-color: var(--color-cyan);
+  box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+}
+
+.gutter.gutter-horizontal {
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
+  cursor: col-resize;
+}
+
+.gutter.gutter-vertical {
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFAQMAAABo7865AAAABlBMVEVHcEzMzMzyAv2sAAAAAXRSTlMAQObYZgAAABBJREFUeF5jOAMEEAIEEFwAn3kMwcB6I2AAAAAASUVORK5CYII=');
+  cursor: row-resize;
+}
+
+/* Selection styling */
+::selection {
+  background: var(--color-cyan);
+  color: var(--color-gray-900);
+}
+
 /* Toggle Switch Styles FOR CREATE BATTLES FORM */
 .toggle-checkbox {
   appearance: none;
